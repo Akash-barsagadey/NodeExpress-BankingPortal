@@ -5,6 +5,21 @@
   <a href="/profile">Profile</a>
   <br>
   <a href="/transfer">Transfer</a>
+
+    <!-- Include summary view for each account -->
+
+    <div class="row">
+        <div class="col-md-4">
+          <%- include('summary', { account: accounts.savings }) %>
+        </div>
+        <div class="col-md-4">
+          <%- include('summary', { account: accounts.checking }) %>
+        </div>
+        <div class="col-md-4">
+          <%- include('summary', { account: accounts.credit }) %>
+        </div>
+      </div>
+ 
 </div>
 
 <%- include('footer') %>
