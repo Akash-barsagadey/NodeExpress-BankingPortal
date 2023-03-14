@@ -17,6 +17,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
 
+const accountRoutes = require('./routes/accounts')
+const servicesRoutes = require('./routes/services')
+
+
 // Index route
 app.get('/', (req, res) => {
     res.render('index', {
@@ -25,57 +29,6 @@ app.get('/', (req, res) => {
     });
   });
 
-// transfer  route
-app.get('/transfer', (req, res) => {
-    res.render('transfer ', {
-      accounts: accounts
-    });
-  });
-
-
-// transfer post  route
-app.post('/transfer', (req, res) => {
-    const { from, to, amount } = req.body;
-
-    // Convert amount to a number
-    const amountNum = parseInt(amount);
-  
-    // Calculate new balances
-    accounts[from].balance -= amountNum;
-    accounts[to].balance += amountNum;
-
-      // Save updated account data to disk
-  const accountsJSON = JSON.stringify(accounts, null, 4);
-
-  writeJSON(accounts)
-
-  //fs.writeFileSync(path.join(__dirname, 'json/accounts.json'), accountsJSON, 'utf8');
-
-   // Render the transfer view with success message
-   const message = "Transfer Completed";
-   res.render('transfer', { message });
-
-  });
-
-
-// payment route
-app.get('/payment', function(req, res) {
-    res.render('payment', { account: accounts.credit });
-  });
-
-// transfer post  route
-app.post('/payment', (req, res) => {
-    accounts.credit.balance -= parseInt(req.body.amount);
-    accounts.credit.available += parseInt(req.body.amount);
-  
-    const accountsJSON = JSON.stringify(accounts);
-
-    writeJSON(accounts)
-    //fs.writeFileSync(path.join(__dirname, 'json/accounts.json'), accountsJSON, 'utf8');
-  
-    res.render('payment', { message: 'Payment Successful', account: accounts.credit });
-
-  });
 
         // profile route
 app.get('/profile', (req, res) => {
@@ -83,28 +36,10 @@ app.get('/profile', (req, res) => {
         user: users[0]
     });
   });
-  // Saving route
-app.get('/savings', (req, res) => {
-    res.render('account', {
-        account: accounts.savings
-    });
-  });
 
-  // Saving route
-  app.get('/checking', (req, res) => {
-    res.render('index', {
-        account: accounts.checking
-    });
-  });
+  app.use('/account', accountRoutes);
 
-    // Saving route
-app.get('/credit', (req, res) => {
-    res.render('account', {
-        account: accounts.credit
-    });
-  });
-
-
+  app.use('/services', servicesRoutes);
 
 
   const PORT = 3000;
@@ -112,3 +47,6 @@ app.get('/credit', (req, res) => {
   app.listen(PORT, () => {
     console.log(`PS Project Running on port ${PORT}!`);
   });
+
+
+ 
